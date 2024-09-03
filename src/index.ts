@@ -70,17 +70,31 @@ if (importProjectsBtn) {
   })
 }
 
-//ThreeJS viewer
-const scene = new THREE.Scene()
+//ThreeJS viewer - l'écran de visualisation
+const scene = new THREE.Scene() // recording space
+
 const viewContainer = document.getElementById("viewer-container") as HTMLElement
+
 const containerDimensions = viewContainer.getBoundingClientRect()
 const aspectRatio = containerDimensions.width / containerDimensions.height
-const camera = new THREE.PerspectiveCamera(75, aspectRatio)
+const camera = new THREE.PerspectiveCamera(75, aspectRatio) // recording camera
+camera.position.z = 5
 
-const renderer = new THREE.WebGLRenderer()
+const renderer = new THREE.WebGLRenderer() // renderer
+viewContainer.append(renderer.domElement) //l'écarn - monitor
+renderer.setSize(containerDimensions.width, containerDimensions.height) //redimensionnement de la fenêtre
 
-viewContainer.append(renderer.domElement)
 
-renderer.setSize(containerDimensions.width, containerDimensions.height)
 
-renderer.render(scene, camera)
+const boxgeometry = new THREE.BoxGeometry()
+const material = new THREE.MeshStandardMaterial()
+const cube = new THREE.Mesh(boxgeometry, material)
+
+
+const directionalLight = new THREE.DirectionalLight()
+const ambientLight = new THREE.AmbientLight()
+
+scene.add(cube, directionalLight, ambientLight)
+renderer.render(scene, camera) //rendu
+
+
