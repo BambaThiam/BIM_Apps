@@ -1,4 +1,6 @@
 import * as THREE from "three"
+import {GUI} from "three/examples/jsm/libs/lil-gui.module.min.js"
+
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js"
 import { IProject, ProjectStatus, UserRole } from "./classes/Project"
 import { ProjectsManager } from "./classes/ProjectsManager"
@@ -122,6 +124,36 @@ function renderScene() {
 }
 
 renderScene()
+
+//axes helper
+const axesHelper = new THREE.AxesHelper(5)
+const size = 10;
+const divisions = 10;
+
+const gridHelper = new THREE.GridHelper( size, divisions );
+gridHelper.material.transparent = true;
+gridHelper.material.opacity = 0.4;
+gridHelper.material.color = new THREE.Color(0x808080);
+
+const helperLight = new THREE.DirectionalLightHelper( directionalLight, 5 )
+
+scene.add(axesHelper, gridHelper, helperLight )
+
+const gui = new GUI()
+
+const cubeControls = gui.addFolder("Cube")
+cubeControls.add(cube.position, "x", -5, 5).step(0.001)
+cubeControls.add(cube.position, "y", -5, 5).step(0.001)
+cubeControls.add(cube.position, "z", -5, 5).step(0.001)
+cubeControls.add(cube, "visible")
+cubeControls.add(cube.material, "wireframe")
+cubeControls.addColor(cube.material, "color")
+cubeControls.add(cube.material, "opacity", 0, 1)
+cubeControls.add(directionalLight.position, "x", -5, 5).step(0.001)
+cubeControls.add(directionalLight.position, "y", -5, 5).step(0.001)
+cubeControls.add(directionalLight.position, "z", -5, 5).step(0.001)
+cubeControls.add(directionalLight, "visible")
+cubeControls.add(directionalLight, 'intensity', 0, 2)
 
 
 
