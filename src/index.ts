@@ -2,6 +2,8 @@ import * as THREE from "three"
 import {GUI} from "three/examples/jsm/libs/lil-gui.module.min.js"
 
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js"
+import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader.js"
+import {MTLLoader} from "three/examples/jsm/loaders/MTLLoader.js"
 import { IProject, ProjectStatus, UserRole } from "./classes/Project"
 import { ProjectsManager } from "./classes/ProjectsManager"
 
@@ -110,7 +112,8 @@ const cube = new THREE.Mesh(boxgeometry, material)
 const directionalLight = new THREE.DirectionalLight()
 const ambientLight = new THREE.AmbientLight( 0x404040, 0.5 )
 
-scene.add(cube, directionalLight, ambientLight)
+// scene.add(cube, directionalLight, ambientLight)
+scene.add(directionalLight, ambientLight)
 
 const cameraControls = new OrbitControls( camera, viewContainer )
 
@@ -156,4 +159,23 @@ cubeControls.add(directionalLight, "visible")
 cubeControls.add(directionalLight, 'intensity', 0, 2)
 
 
+// Loading external geometry
+const objLoader = new OBJLoader()
+const mtlLoader = new MTLLoader()
 
+// objLoader.load("../assets/Gear/Gear1.obj", (mesh) => {
+//   scene.add(mesh)
+// })
+
+mtlLoader.load("../assets/Gear/Gear1.mtl", (materials) => {
+  materials.preload()
+  objLoader.setMaterials(materials)
+  objLoader.load("../assets/Gear/Gear1.obj", (mesh) => {
+    scene.add(mesh)
+  })
+})
+
+//ad more light to obj file
+// const light = new THREE.PointLight(0xffffff, 1, 100)
+// light.position.set(0, 0, 100)
+// scene.add(light)
