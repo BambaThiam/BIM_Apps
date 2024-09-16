@@ -1,4 +1,5 @@
 import * as THREE from "three"
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js"
 import { IProject, ProjectStatus, UserRole } from "./classes/Project"
 import { ProjectsManager } from "./classes/ProjectsManager"
 
@@ -72,18 +73,31 @@ if (importProjectsBtn) {
 
 //ThreeJS viewer - l'écran de visualisation
 const scene = new THREE.Scene() // recording space
+// scene.background = new THREE.Color(0x202124)
+// scene.background = new THREE.Color("#ff0000")
 
 const viewContainer = document.getElementById("viewer-container") as HTMLElement
 
-const containerDimensions = viewContainer.getBoundingClientRect()
-const aspectRatio = containerDimensions.width / containerDimensions.height
-const camera = new THREE.PerspectiveCamera(75, aspectRatio) // recording camera
+// const containerDimensions = viewContainer.getBoundingClientRect()
+// const aspectRatio = containerDimensions.width / containerDimensions.height
+const camera = new THREE.PerspectiveCamera(75) // recording camera
 camera.position.z = 5
 
-const renderer = new THREE.WebGLRenderer() // renderer
+const renderer = new THREE.WebGLRenderer({alpha : true, antialias : true}) // renderer
 viewContainer.append(renderer.domElement) //l'écarn - monitor
-renderer.setSize(containerDimensions.width, containerDimensions.height) //redimensionnement de la fenêtre
+// renderer.setSize(containerDimensions.width, containerDimensions.height) //redimensionnement de la fenêtre
 
+
+function resizeViewer() {
+  const containerDimensions = viewContainer.getBoundingClientRect()
+  renderer.setSize(containerDimensions.width, containerDimensions.height) // Update renderer size
+  const aspectRatio = containerDimensions.width / containerDimensions.height
+  camera.aspect = aspectRatio // Update camera aspect ratio
+  camera.updateProjectionMatrix() // Update the camera projection matrix
+}
+window.addEventListener('resize', resizeViewer)
+
+resizeViewer()
 
 
 const boxgeometry = new THREE.BoxGeometry()
@@ -92,9 +106,22 @@ const cube = new THREE.Mesh(boxgeometry, material)
 
 
 const directionalLight = new THREE.DirectionalLight()
-const ambientLight = new THREE.AmbientLight()
+const ambientLight = new THREE.AmbientLight( 0x404040, 0.5 )
 
 scene.add(cube, directionalLight, ambientLight)
-renderer.render(scene, camera) //rendu
+
+const cameraControls = new OrbitControls( camera, viewContainer )
+
+// renderer.render(scene, camera) //rendu
+
+function renderScene() {
+  cube.rotation.x += 0.01
+  cube.rotation.y += 0.01
+  renderer.render(scene, camera)
+  requestAnimationFrame(renderScene)
+}
+
+renderScene()
+
 
 
